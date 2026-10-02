@@ -492,7 +492,7 @@ h2.display { font-size: clamp(2.5rem, 1.6rem + 4.2vw, 5.75rem); }
   font-weight: 500;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(244, 239, 232, 0.45);
+  color: rgba(244, 239, 232, 0.62);
 }
 .hero__rail span { transition: color 0.4s var(--ease); }
 .hero__rail span.is-active { color: var(--ivory); }
