@@ -104,8 +104,8 @@
 
   /* ---------- Project galleries ---------- */
   const img = (name, alt, max = 1600) => ({
-    src: `/assets/img/${name}-${max}.webp`,
-    srcset: max > 1080 ? `/assets/img/${name}-1080.webp 1080w, /assets/img/${name}-${max}.webp ${max}w` : '',
+    src: `assets/img/${name}-${max}.webp`,
+    srcset: max > 1080 ? `assets/img/${name}-1080.webp 1080w, assets/img/${name}-${max}.webp ${max}w` : '',
     alt
   });
   const galleries = {
@@ -228,8 +228,8 @@
 
     // Two frame sets cut from the same Higgsfield sequence: square and 9:16.
     const SETS = {
-      d: { path: '/assets/hero/v3/d/', count: 300, final: '/assets/hero/v3/final-d.webp', fx: 0.52, fy: 0.5, keep: 60 },
-      m: { path: '/assets/hero/v3/m/', count: 200, final: '/assets/hero/v3/final-m.webp', fx: 0.5, fy: 0.5, keep: 36 }
+      d: { path: 'assets/hero/v3/d/', count: 300, final: 'assets/hero/v3/final-d.webp', fx: 0.52, fy: 0.5, keep: 60 },
+      m: { path: 'assets/hero/v3/m/', count: 200, final: 'assets/hero/v3/final-m.webp', fx: 0.5, fy: 0.5, keep: 36 }
     };
     // Scroll timeline (0..1 across the pinned hero)
     const SEQ_START = 0.05;

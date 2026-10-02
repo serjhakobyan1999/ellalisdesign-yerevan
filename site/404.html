@@ -5,8 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Page not found — Ellalis Design</title>
   <meta name="robots" content="noindex">
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/assets/css/main.css">
+  <script>
+    // The 404 page can be served from any URL depth; anchor relative links at the site root
+    // (a sub-path on GitHub Pages project sites, "/" on Netlify or a custom domain).
+    (function () {
+      var parts = location.pathname.split('/');
+      var root = location.hostname.endsWith('github.io') && parts[1] ? '/' + parts[1] + '/' : '/';
+      document.write('<base href="' + root + '">');
+    })();
+  </script>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/main.css">
   <style>
     .notfound { min-height: 100vh; min-height: 100svh; display: grid; place-content: center; gap: 1.5rem; padding: 2rem var(--gutter); background: var(--ink); color: var(--ivory); text-align: center; }
     .notfound .display { font-size: clamp(2.6rem, 8vw, 5.5rem); }
@@ -18,7 +27,7 @@
     <p class="eyebrow eyebrow--light" style="justify-self:center">Ellalis Design</p>
     <h1 class="display">This room hasn’t been <em>designed yet.</em></h1>
     <p>The page you’re looking for doesn’t exist.</p>
-    <p><a class="btn btn--light" href="/">Back to the studio</a></p>
+    <p><a class="btn btn--light" href="./">Back to the studio</a></p>
   </main>
 </body>
 </html>
