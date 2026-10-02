@@ -126,7 +126,11 @@
   });
 
   /* ---------- Project galleries ---------- */
-  const img = (name, alt, max = 1600) => ({ src: `/assets/img/${name}-${max}.webp`, alt });
+  const img = (name, alt, max = 1600) => ({
+    src: `/assets/img/${name}-${max}.webp`,
+    srcset: max > 1080 ? `/assets/img/${name}-1080.webp 1080w, /assets/img/${name}-${max}.webp ${max}w` : '',
+    alt
+  });
   const galleries = {
     'two-storey': {
       title: 'Two-Storey Restaurant',
@@ -189,12 +193,16 @@
       const items = current.items;
       index = (i + items.length) % items.length;
       const item = items[index];
+      lbImg.srcset = item.srcset;
       lbImg.src = item.src;
       lbImg.alt = item.alt;
       lbCaption.textContent = item.alt;
       lbCounter.textContent = `${index + 1} / ${items.length}`;
+      const upcoming = items[(index + 1) % items.length];
       const next = new Image();
-      next.src = items[(index + 1) % items.length].src;
+      next.sizes = lbImg.sizes;
+      next.srcset = upcoming.srcset;
+      next.src = upcoming.src;
     };
 
     document.querySelectorAll('[data-gallery]').forEach((btn) => {
@@ -211,7 +219,7 @@
     lightbox.querySelector('[data-lightbox-prev]').addEventListener('click', () => show(index - 1));
     lightbox.querySelector('[data-lightbox-next]').addEventListener('click', () => show(index + 1));
     lightbox.querySelector('[data-lightbox-close]').addEventListener('click', () => lightbox.close());
-    lightbox.addEventListener('close', () => { root.style.overflow = ''; lbImg.removeAttribute('src'); });
+    lightbox.addEventListener('close', () => { root.style.overflow = ''; lbImg.removeAttribute('srcset'); lbImg.removeAttribute('src'); });
     lightbox.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight') show(index + 1);
       if (e.key === 'ArrowLeft') show(index - 1);
@@ -239,7 +247,7 @@
     const railBar = hero.querySelector('[data-hero-bar]');
     const cue = hero.querySelector('[data-scroll-cue]');
 
-    // Two frame sets: square for landscape panels, 9:16 for portrait screens.
+    // Two frame sets cut from the same Higgsfield sequence: square and 9:16.
     const SETS = {
       d: { path: '/assets/hero/d/', count: 100, final: '/assets/hero/final-d.webp', fx: 0.52, fy: 0.5 },
       m: { path: '/assets/hero/m/', count: 100, final: '/assets/hero/final-m.webp', fx: 0.5, fy: 0.5 }
@@ -263,11 +271,6 @@
     let visible = true;
 
     const pad = (n) => String(n).padStart(3, '0');
-
-    const pickSet = () => {
-      const r = stage.getBoundingClientRect();
-      return r.width / r.height < 0.8 ? SETS.m : SETS.d;
-    };
 
     const loadImage = (src) => new Promise((resolve) => {
       const im = new Image();
@@ -328,7 +331,8 @@
         canvas.width = cw;
         canvas.height = ch;
       }
-      const next = r.width / r.height < 0.8 ? SETS.m : SETS.d;
+      // Portrait screens get the 9:16 set, everything else the square set
+      const next = r.width / r.height < 1 ? SETS.m : SETS.d;
       if (next !== set) {
         set = next;
         loadSet(set);
