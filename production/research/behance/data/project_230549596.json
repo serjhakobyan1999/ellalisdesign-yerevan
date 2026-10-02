@@ -1,0 +1,290 @@
+{
+ "modules": [
+  {
+   "id": 1321655244,
+   "oid": "tM7ux58q5VPJ0OAXdcTLLQ",
+   "fullBleed": 0,
+   "caption": "",
+   "isDoneProcessing": true,
+   "captionPlain": "",
+   "embed": "<div class=\"embed-dimensions\" style=\"max-width: 720px; max-height: 1280px; margin: 0 auto;\">\n    <div class=\"embed-aspect-ratio\" style=\"padding-bottom: 177.78%; position: relative; height: 0px;\">\n        <iframe title=\"Audio/Video Player\" class=\"embed-content\" src=\"https://www-ccv.adobe.io/v1/player/ccv/IYiaGJs-gw4/embed?api_key=behance1&bgcolor=%23191919\" frameborder=\"0\" allowfullscreen style=\"position: absolute; top: 0; left: 0; width: 100%; height: 100%;\"></iframe>\n    </div>\n    </div>",
+   "height": 1066,
+   "width": 600,
+   "captionAlignment": "left",
+   "__typename": "VideoModule"
+  }
+ ],
+ "id": 230549596,
+ "oid": "29F5QBdGoK7_GWrXiNYofw",
+ "slug": "RESTAURANT-DESIGN-INTERIOR",
+ "premium": 0,
+ "isPrivate": false,
+ "isOwner": 0,
+ "canvasWidth": 920,
+ "embedTag": "<iframe src=\"https://www.behance.net/embed/project/230549596?ilo0=1\" height=\"316\" width=\"404\" allowfullscreen lazyload frameborder=\"0\" allow=\"clipboard-write\" refererPolicy=\"strict-origin-when-cross-origin\"></iframe>",
+ "url": "https://www.behance.net/gallery/230549596/RESTAURANT-DESIGN-INTERIOR",
+ "stylesInline": "#project-modules .title { color: #191919;font-family: helvetica,arial,sans-serif;font-size: 36px;font-style: normal;font-weight: bold;line-height: 1.1em;text-align: left;text-decoration: none; }\r\n#project-modules .sub-title { color: #a4a4a4;font-family: helvetica,arial,sans-serif;font-size: 20px;font-style: normal;font-weight: normal;line-height: 1.4em;text-align: left;text-decoration: none; }\r\n#project-modules .editor-text .main-text, #primary-project-content.project-styles .main-text { color: #696969;font-family: helvetica,arial,sans-serif;font-size: 20px;font-style: normal;font-weight: normal;line-height: 1.4em;text-align: left;text-decoration: none; }\r\n#project-modules .caption, #project-modules .caption-text-wrap { color: #a4a4a4;font-family: helvetica,arial,sans-serif;font-size: 14px;font-style: italic;font-weight: normal;line-height: 1.4em;text-align: left;text-decoration: none; }\r\n#project-modules .caption-text-wrap a { font-size: 14px !important; }\r\n#project-modules .main-text a { color: #1769FF;text-align: left;text-decoration: none; }\r\n#primary-project-content .module { padding-bottom: 0px; }\r\n#primary-project-content { padding-top: 80px; background-color: #FFFFFF;  }\r\n.spacer { height: 20px; }.divider { display: none; }.module.last .divider { display: none; }",
+ "name": "RESTAURANT DESIGN INTERIOR",
+ "description": "",
+ "tags": [],
+ "privacyLevel": "PUBLIC",
+ "matureAccess": "allowed",
+ "hasMatureContent": false,
+ "publishedOn": 1752744527,
+ "canBeAddedToMoodboard": true,
+ "isMonaReported": false,
+ "isAppreciated": false,
+ "projectCTA": {
+  "ctaType": "GET_HIRED",
+  "link": null,
+  "isDefaultCTA": true
+ },
+ "covers": {
+  "allAvailable": [
+   {
+    "url": "https://mir-s3-cdn-cf.behance.net/projects/original/45003f230549596.6878c24e2b80f.jpg",
+    "width": null,
+    "type": "JPG"
+   },
+   {
+    "url": "https://mir-s3-cdn-cf.behance.net/projects/original_webp/45003f230549596.6878c24e2b80f.jpg",
+    "width": null,
+    "type": "WEBP"
+   },
+   {
+    "url": "https://mir-s3-cdn-cf.behance.net/projects/max_808/45003f230549596.6878c24e2b80f.jpg",
+    "width": 808,
+    "type": "JPG"
+   },
+   {
+    "url": "https://mir-s3-cdn-cf.behance.net/projects/max_808_webp/45003f230549596.6878c24e2b80f.jpg",
+    "width": 808,
+    "type": "WEBP"
+   },
+   {
+    "url": "https://mir-s3-cdn-cf.behance.net/projects/808/45003f230549596.6878c24e2b80f.jpg",
+    "width": 808,
+    "type": "JPG"
+   },
+   {
+    "url": "https://mir-s3-cdn-cf.behance.net/projects/808_webp/45003f230549596.6878c24e2b80f.jpg",
+    "width": 808,
+    "type": "WEBP"
+   },
+   {
+    "url": "https://mir-s3-cdn-cf.behance.net/projects/404/45003f230549596.6878c24e2b80f.jpg",
+    "width": 404,
+    "type": "JPG"
+   },
+   {
+    "url": "https://mir-s3-cdn-cf.behance.net/projects/404_webp/45003f230549596.6878c24e2b80f.jpg",
+    "width": 404,
+    "type": "WEBP"
+   },
+   {
+    "url": "https://mir-s3-cdn-cf.behance.net/projects/202/45003f230549596.6878c24e2b80f.jpg",
+    "width": 202,
+    "type": "JPG"
+   },
+   {
+    "url": "https://mir-s3-cdn-cf.behance.net/projects/202_webp/45003f230549596.6878c24e2b80f.jpg",
+    "width": 202,
+    "type": "WEBP"
+   },
+   {
+    "url": "https://mir-s3-cdn-cf.behance.net/projects/230/45003f230549596.6878c24e2b80f.jpg",
+    "width": 230,
+    "type": "JPG"
+   },
+   {
+    "url": "https://mir-s3-cdn-cf.behance.net/projects/230_webp/45003f230549596.6878c24e2b80f.jpg",
+    "width": 230,
+    "type": "WEBP"
+   },
+   {
+    "url": "https://mir-s3-cdn-cf.behance.net/projects/115/45003f230549596.6878c24e2b80f.jpg",
+    "width": 115,
+    "type": "JPG"
+   },
+   {
+    "url": "https://mir-s3-cdn-cf.behance.net/projects/115_webp/45003f230549596.6878c24e2b80f.jpg",
+    "width": 115,
+    "type": "WEBP"
+   }
+  ],
+  "size_original_webp": {
+   "url": "https://mir-s3-cdn-cf.behance.net/projects/original_webp/45003f230549596.6878c24e2b80f.jpg",
+   "width": null,
+   "type": "WEBP"
+  }
+ },
+ "owners": [
+  {
+   "id": 978145273,
+   "displayName": "Ellalis Design",
+   "url": "https://www.behance.net/ELLALIS",
+   "isFollowing": false,
+   "username": "ELLALIS",
+   "isProfileOwner": false,
+   "availabilityInfo": {
+    "isAvailableFullTime": true,
+    "isAvailableFreelance": true,
+    "budgetMin": 10000,
+    "enforceMinBudget": false,
+    "hiringTimeline": {
+     "key": "now"
+    }
+   },
+   "isActive": true,
+   "isDeleted": false,
+   "location": "Yerevan, Armenia",
+   "locationUrl": "https://www.behance.net/search/users?country=AM&city=Yerevan",
+   "country": "Armenia",
+   "city": "Yerevan",
+   "state": "",
+   "creatorPro": {
+    "isActive": false,
+    "initialSubscriptionDate": null
+   },
+   "recruiterPro": {
+    "isActive": false
+   },
+   "images": {
+    "allAvailable": [
+     {
+      "url": "https://pps.services.adobe.com/api/profile/694E1D4A605DEC450A495ED0@AdobeID/image/e7dc55d5-8fb4-492c-80b0-5ff43b46e680/50",
+      "width": 50,
+      "type": "JPG"
+     },
+     {
+      "url": "https://pps.services.adobe.com/api/profile/694E1D4A605DEC450A495ED0@AdobeID/image/e7dc55d5-8fb4-492c-80b0-5ff43b46e680/100",
+      "width": 100,
+      "type": "JPG"
+     },
+     {
+      "url": "https://pps.services.adobe.com/api/profile/694E1D4A605DEC450A495ED0@AdobeID/image/e7dc55d5-8fb4-492c-80b0-5ff43b46e680/115",
+      "width": 115,
+      "type": "JPG"
+     },
+     {
+      "url": "https://pps.services.adobe.com/api/profile/694E1D4A605DEC450A495ED0@AdobeID/image/e7dc55d5-8fb4-492c-80b0-5ff43b46e680/230",
+      "width": 230,
+      "type": "JPG"
+     },
+     {
+      "url": "https://pps.services.adobe.com/api/profile/694E1D4A605DEC450A495ED0@AdobeID/image/e7dc55d5-8fb4-492c-80b0-5ff43b46e680/138",
+      "width": 138,
+      "type": "JPG"
+     },
+     {
+      "url": "https://pps.services.adobe.com/api/profile/694E1D4A605DEC450A495ED0@AdobeID/image/e7dc55d5-8fb4-492c-80b0-5ff43b46e680/276",
+      "width": 276,
+      "type": "JPG"
+     }
+    ]
+   },
+   "firstName": "Ellalis",
+   "isMessageButtonVisible": true,
+   "isResponsiveToHiring": false
+  }
+ ],
+ "isCommentingAllowed": true,
+ "sourceFiles": [],
+ "creator": {
+  "id": 978145273,
+  "isProfileOwner": false,
+  "isFollowing": false,
+  "hasPremiumAccess": false,
+  "hasAllowEmbeds": true,
+  "url": "https://www.behance.net/ELLALIS",
+  "displayName": "Ellalis Design",
+  "images": {
+   "allAvailable": [
+    {
+     "width": 50,
+     "url": "https://pps.services.adobe.com/api/profile/694E1D4A605DEC450A495ED0@AdobeID/image/e7dc55d5-8fb4-492c-80b0-5ff43b46e680/50",
+     "type": "JPG"
+    },
+    {
+     "width": 100,
+     "url": "https://pps.services.adobe.com/api/profile/694E1D4A605DEC450A495ED0@AdobeID/image/e7dc55d5-8fb4-492c-80b0-5ff43b46e680/100",
+     "type": "JPG"
+    },
+    {
+     "width": 115,
+     "url": "https://pps.services.adobe.com/api/profile/694E1D4A605DEC450A495ED0@AdobeID/image/e7dc55d5-8fb4-492c-80b0-5ff43b46e680/115",
+     "type": "JPG"
+    },
+    {
+     "width": 230,
+     "url": "https://pps.services.adobe.com/api/profile/694E1D4A605DEC450A495ED0@AdobeID/image/e7dc55d5-8fb4-492c-80b0-5ff43b46e680/230",
+     "type": "JPG"
+    },
+    {
+     "width": 138,
+     "url": "https://pps.services.adobe.com/api/profile/694E1D4A605DEC450A495ED0@AdobeID/image/e7dc55d5-8fb4-492c-80b0-5ff43b46e680/138",
+     "type": "JPG"
+    },
+    {
+     "width": 276,
+     "url": "https://pps.services.adobe.com/api/profile/694E1D4A605DEC450A495ED0@AdobeID/image/e7dc55d5-8fb4-492c-80b0-5ff43b46e680/276",
+     "type": "JPG"
+    }
+   ]
+  }
+ },
+ "tools": [
+  {
+   "id": 484032015,
+   "title": "Behance Mobile",
+   "url": "/search/projects?tools=484032015",
+   "backgroundImage": null,
+   "backgroundColor": null,
+   "synonym": null
+  }
+ ],
+ "allModules": [
+  {
+   "id": 1321655244,
+   "oid": "tM7ux58q5VPJ0OAXdcTLLQ",
+   "fullBleed": 0,
+   "caption": "",
+   "isDoneProcessing": true,
+   "captionPlain": "",
+   "embed": "<div class=\"embed-dimensions\" style=\"max-width: 720px; max-height: 1280px; margin: 0 auto;\">\n    <div class=\"embed-aspect-ratio\" style=\"padding-bottom: 177.78%; position: relative; height: 0px;\">\n        <iframe title=\"Audio/Video Player\" class=\"embed-content\" src=\"https://www-ccv.adobe.io/v1/player/ccv/IYiaGJs-gw4/embed?api_key=behance1&bgcolor=%23191919\" frameborder=\"0\" allowfullscreen style=\"position: absolute; top: 0; left: 0; width: 100%; height: 100%;\"></iframe>\n    </div>\n    </div>",
+   "height": 1066,
+   "width": 600,
+   "captionAlignment": "left",
+   "__typename": "VideoModule"
+  }
+ ],
+ "aeroData": null,
+ "adminNotices": [],
+ "license": {
+  "license": "no-use"
+ },
+ "features": [],
+ "stats": {
+  "appreciations": {
+   "all": 17
+  },
+  "views": {
+   "all": 132
+  },
+  "comments": {
+   "all": 3
+  }
+ },
+ "styles": {
+  "spacing": {
+   "projectTopMargin": "80"
+  }
+ },
+ "colors": {
+  "r": 86,
+  "g": 46,
+  "b": 21
+ },
+ "isPublished": true,
+ "shortUrl": "http://be.net/gallery/230549596/RESTAURANT-DESIGN-INTERIOR"
+}
