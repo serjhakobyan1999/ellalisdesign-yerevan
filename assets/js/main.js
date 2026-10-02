@@ -63,29 +63,6 @@
     revealEls.forEach((el) => el.classList.add('is-in'));
   }
 
-  /* ---------- Count-up facts ---------- */
-  const counters = document.querySelectorAll('[data-count]');
-  if ('IntersectionObserver' in window && !reduceMotionQuery.matches) {
-    const countIO = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        countIO.unobserve(entry.target);
-        const el = entry.target;
-        const target = Number(el.dataset.count);
-        const start = performance.now();
-        const duration = 1400;
-        const tick = (now) => {
-          const t = clamp((now - start) / duration);
-          el.textContent = String(Math.round(target * (1 - Math.pow(1 - t, 3))));
-          if (t < 1) requestAnimationFrame(tick);
-        };
-        el.textContent = '0';
-        requestAnimationFrame(tick);
-      });
-    }, { threshold: 0.6 });
-    counters.forEach((el) => countIO.observe(el));
-  }
-
   /* ---------- Drag to scroll (mouse only; touch scrolls natively) ---------- */
   document.querySelectorAll('[data-drag-scroll]').forEach((track) => {
     let startX = 0;
@@ -162,7 +139,7 @@
       title: 'Restaurant Courtyard',
       items: [
         img('cy-canopy-dining', 'Courtyard dining under a light tulle canopy with stone walls and a wall waterfall'),
-        img('cy-wide', 'Wide view of the 308 m² restaurant courtyard with lounge seating and woven pendants'),
+        img('cy-wide', 'Wide view of the restaurant courtyard with lounge seating and woven pendants'),
         img('cy-seating', 'Rounded sofas, woven poufs and dining tables beneath the tulle canopy'),
         img('cy-water-stairs', 'Illuminated stone staircase with water flowing beneath glass'),
         img('cy-zen-garden', 'Raked-sand garden with a stream, sculpted stones and a bonsai before a round screen'),
@@ -241,16 +218,18 @@
 
     const stage = hero.querySelector('[data-hero-stage]');
     const canvas = hero.querySelector('[data-hero-canvas]');
-    const ctx = canvas.getContext('2d', { alpha: false });
-    const phases = Array.from(hero.querySelectorAll('[data-phase]'));
+    const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
+    const phases = Array.from(hero.querySelectorAll('[data-phase]')).map((el) => ({
+      el, inAt: Number(el.dataset.in), outAt: Number(el.dataset.out), o: -1
+    }));
     const railSteps = Array.from(hero.querySelectorAll('.hero__rail [data-step]'));
     const railBar = hero.querySelector('[data-hero-bar]');
     const cue = hero.querySelector('[data-scroll-cue]');
 
     // Two frame sets cut from the same Higgsfield sequence: square and 9:16.
     const SETS = {
-      d: { path: '/assets/hero/d/', count: 100, final: '/assets/hero/final-d.webp', fx: 0.52, fy: 0.5 },
-      m: { path: '/assets/hero/m/', count: 100, final: '/assets/hero/final-m.webp', fx: 0.5, fy: 0.5 }
+      d: { path: '/assets/hero/d/', count: 247, final: '/assets/hero/final-d.webp', fx: 0.52, fy: 0.5, keep: 48 },
+      m: { path: '/assets/hero/m/', count: 165, final: '/assets/hero/final-m.webp', fx: 0.5, fy: 0.5, keep: 30 }
     };
     // Scroll timeline (0..1 across the pinned hero)
     const SEQ_START = 0.05;
@@ -258,29 +237,70 @@
     const FINAL_IN = [0.85, 0.9];
     const RAIL = [0.09, 0.26, 0.47, 0.68];
     const FADE = 0.035;
+    const SMOOTHING = 0.11; // per 60 Hz frame; lower = silkier, more inertia
 
     let set = null;
-    let frames = [];
-    let finalImg = null;
+    let blobs = [];             // compressed frame bytes (small, all kept)
+    const bitmaps = new Map();  // decoded, GPU-ready frames around the playhead
+    const decoding = new Set();
+    let finalBitmap = null;
     let target = 0;
     let progress = 0;
+    let direction = 1;
     let rafId = 0;
     let lastTime = 0;
     let cw = 0;
     let ch = 0;
     let visible = true;
+    let drawn = '';
 
     const pad = (n) => String(n).padStart(3, '0');
+    const seqIndex = (p) => clamp((p - SEQ_START) / (SEQ_END - SEQ_START)) * (set.count - 1);
 
-    const loadImage = (src) => new Promise((resolve) => {
-      const im = new Image();
-      im.decoding = 'async';
-      im.onload = () => {
-        (im.decode ? im.decode() : Promise.resolve()).catch(() => {}).then(() => resolve(im));
-      };
-      im.onerror = () => resolve(null);
-      im.src = src;
-    });
+    const fetchBlob = (url) => fetch(url).then((r) => (r.ok ? r.blob() : null)).catch(() => null);
+    const decode = (blob) => (window.createImageBitmap
+      ? createImageBitmap(blob)
+      : new Promise((resolve) => {
+        const im = new Image();
+        im.onload = () => resolve(im);
+        im.onerror = () => resolve(null);
+        im.src = URL.createObjectURL(blob);
+      }));
+
+    // Decode off the main thread, nearest frames first, biased towards the scroll direction.
+    const pump = () => {
+      if (!set) return;
+      const centre = Math.round(seqIndex(progress));
+      const ahead = Math.round(set.keep * 0.7);
+      const behind = set.keep - ahead;
+      for (let d = 0; d <= ahead && decoding.size < 4; d++) {
+        for (const i of [centre + d * direction, centre - Math.min(d, behind) * direction]) {
+          if (i < 0 || i >= set.count || !blobs[i] || bitmaps.has(i) || decoding.has(i)) continue;
+          if (decoding.size >= 4) break;
+          decoding.add(i);
+          const token = set;
+          decode(blobs[i]).then((bmp) => {
+            decoding.delete(i);
+            if (set !== token || !bmp) { if (bmp && bmp.close) bmp.close(); return; }
+            bitmaps.set(i, bmp);
+            evict();
+            if (Math.abs(i - seqIndex(progress)) <= 2) requestRender(true);
+            pump();
+          });
+        }
+      }
+    };
+
+    const evict = () => {
+      if (bitmaps.size <= set.keep) return;
+      const centre = seqIndex(progress);
+      const sorted = Array.from(bitmaps.keys()).sort((a, b) => Math.abs(b - centre) - Math.abs(a - centre));
+      for (const i of sorted.slice(0, bitmaps.size - set.keep)) {
+        const bmp = bitmaps.get(i);
+        if (bmp && bmp.close) bmp.close();
+        bitmaps.delete(i);
+      }
+    };
 
     // Frames load in stages so they never compete with the first paint: a coarse pass once
     // the page has loaded, then the full set on the first interaction (or after a short idle).
@@ -293,67 +313,82 @@
     ['scroll', 'wheel', 'touchstart', 'pointerdown', 'keydown'].forEach((type) => {
       window.addEventListener(type, () => releaseFull(), { once: true, passive: true });
     });
-    pageLoaded.then(() => window.setTimeout(() => releaseFull(), 3500));
-
-    const currentIndex = () => Math.round(clamp((progress - SEQ_START) / (SEQ_END - SEQ_START)) * (set.count - 1));
+    pageLoaded.then(() => window.setTimeout(() => releaseFull(), 3000));
 
     const loadSet = (s) => {
-      frames = new Array(s.count).fill(null);
-      finalImg = null;
+      bitmaps.forEach((b) => b.close && b.close());
+      bitmaps.clear();
+      blobs = new Array(s.count).fill(null);
+      finalBitmap = null;
       const token = s;
-      const coarse = [];
       const seen = new Set();
-      for (let i = 0; i < s.count; i += 11) { coarse.push(i); seen.add(i); }
+      const coarse = [];
+      for (let i = 0; i < s.count; i += Math.round(s.count / 14)) { coarse.push(i); seen.add(i); }
       if (!seen.has(s.count - 1)) { coarse.push(s.count - 1); seen.add(s.count - 1); }
       const fine = [];
-      [6, 3, 2, 1].forEach((step) => {
-        for (let i = 0; i < s.count; i += step) {
-          if (!seen.has(i)) { seen.add(i); fine.push(i); }
-        }
+      [8, 4, 2, 1].forEach((step) => {
+        for (let i = 0; i < s.count; i += step) if (!seen.has(i)) { seen.add(i); fine.push(i); }
       });
+      // Fetch the fine pass from the playhead outward so nearby frames arrive first
+      const byDistance = (list) => {
+        const c = seqIndex(progress);
+        return list.slice().sort((a, b) => Math.abs(a - c) - Math.abs(b - c));
+      };
 
       const run = (order, workers) => {
         let cursor = 0;
         const worker = async () => {
           while (cursor < order.length && set === token) {
             const i = order[cursor++];
-            const im = await loadImage(`${s.path}${pad(i)}.webp`);
+            const blob = await fetchBlob(`${s.path}${pad(i)}.webp`);
             if (set !== token) return;
-            frames[i] = im;
-            if (i === 0) hero.classList.add('is-ready');
-            // Redraw only when the new frame is the one on screen (or its neighbour)
-            if (Math.abs(i - currentIndex()) <= 1) requestRender(true);
+            blobs[i] = blob;
+            pump();
           }
         };
         return Promise.all(Array.from({ length: workers }, worker));
       };
 
+      // Frame 0 is already on screen as the poster: show it instantly while the bytes load (HTTP-cached)
+      const poster = hero.querySelector('[data-hero-poster] img');
+      const reusePoster = () => (poster && poster.complete && poster.naturalWidth && window.createImageBitmap
+        && (poster.currentSrc || poster.src).endsWith(`${s.path}000.webp`)
+        ? createImageBitmap(poster).then((bmp) => {
+          if (set === token) { bitmaps.set(0, bmp); requestRender(true); }
+        }).catch(() => {})
+        : Promise.resolve());
+
       pageLoaded
+        .then(reusePoster)
         .then(() => run(coarse, 3))
-        .then(() => loadImage(s.final))
-        .then((im) => { if (set === token) { finalImg = im; requestRender(true); } })
+        .then(() => fetchBlob(s.final))
+        .then((blob) => (blob ? decode(blob) : null))
+        .then((bmp) => { if (set === token) { finalBitmap = bmp; requestRender(true); } })
         .then(() => fullRequested)
-        .then(() => run(fine, 4));
+        .then(() => run(byDistance(fine), 6));
     };
 
-    const nearestFrame = (i) => {
-      if (frames[i]) return frames[i];
-      for (let d = 1; d < frames.length; d++) {
-        if (frames[i - d]) return frames[i - d];
-        if (frames[i + d]) return frames[i + d];
+    const nearest = (i) => {
+      if (bitmaps.has(i)) return [i, bitmaps.get(i)];
+      for (let d = 1; d < set.count; d++) {
+        if (bitmaps.has(i - d)) return [i - d, bitmaps.get(i - d)];
+        if (bitmaps.has(i + d)) return [i + d, bitmaps.get(i + d)];
       }
-      return null;
+      return [-1, null];
     };
 
     const resize = () => {
       const r = stage.getBoundingClientRect();
       const media = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // The frames are ~1080 px; rendering the canvas beyond 1.5x adds cost but no detail
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       cw = Math.round(media.width * dpr);
       ch = Math.round(media.height * dpr);
       if (canvas.width !== cw || canvas.height !== ch) {
         canvas.width = cw;
         canvas.height = ch;
+        ctx.imageSmoothingQuality = 'high';
+        drawn = '';
       }
       // Portrait screens get the 9:16 set, everything else the square set
       const next = r.width / r.height < 1 ? SETS.m : SETS.d;
@@ -365,53 +400,50 @@
     };
 
     const drawCover = (im, zoom, alpha) => {
-      if (!im) return;
-      const s = Math.max(cw / im.naturalWidth, ch / im.naturalHeight) * zoom;
-      const dw = im.naturalWidth * s;
-      const dh = im.naturalHeight * s;
-      const dx = (cw - dw) * set.fx;
-      const dy = (ch - dh) * set.fy;
+      const s = Math.max(cw / im.width, ch / im.height) * zoom;
+      const dw = im.width * s;
+      const dh = im.height * s;
       ctx.globalAlpha = alpha;
-      ctx.drawImage(im, dx, dy, dw, dh);
+      ctx.drawImage(im, (cw - dw) * set.fx, (ch - dh) * set.fy, dw, dh);
     };
 
     const render = () => {
       const p = progress;
-      const seq = clamp((p - SEQ_START) / (SEQ_END - SEQ_START));
+      const f = seqIndex(p);
       const zoom = 1 + 0.075 * easeInOut(clamp(p / 0.95));
+      const finalAlpha = finalBitmap ? clamp((p - FINAL_IN[0]) / (FINAL_IN[1] - FINAL_IN[0])) : 0;
 
-      // Frames: blend neighbours for smooth scrubbing between keyframes
-      const f = seq * (set.count - 1);
       const i0 = Math.floor(f);
-      const i1 = Math.min(i0 + 1, set.count - 1);
       const t = f - i0;
-      const a = nearestFrame(i0);
-      const b = frames[i1];
-      if (a) {
-        drawCover(a, zoom, 1);
-        if (b && t > 0.01 && b !== a) drawCover(b, zoom, t);
+      const [a, bmpA] = nearest(i0);
+      const bmpB = a === i0 ? bitmaps.get(Math.min(i0 + 1, set.count - 1)) : null;
+      const key = `${a}|${bmpB ? t.toFixed(3) : ''}|${zoom.toFixed(4)}|${finalAlpha.toFixed(3)}|${cw}x${ch}`;
+      if (key !== drawn && (bmpA || finalAlpha >= 1)) {
+        drawn = key;
+        if (finalAlpha < 1 && bmpA) {
+          drawCover(bmpA, zoom, 1);
+          // Sub-frame blend between neighbouring frames keeps motion continuous at any scroll speed
+          if (bmpB && t > 0.02) drawCover(bmpB, zoom, t);
+        }
+        if (finalAlpha > 0) drawCover(finalBitmap, zoom, finalAlpha);
+        ctx.globalAlpha = 1;
+        if (!hero.classList.contains('is-ready')) hero.classList.add('is-ready');
       }
-      // Land on the real, full-resolution photograph of the finished project
-      const finalAlpha = clamp((p - FINAL_IN[0]) / (FINAL_IN[1] - FINAL_IN[0]));
-      if (finalImg && finalAlpha > 0) drawCover(finalImg, zoom, finalAlpha);
-      ctx.globalAlpha = 1;
 
-      // Copy phases
-      phases.forEach((el) => {
-        const inAt = Number(el.dataset.in);
-        const outAt = Number(el.dataset.out);
+      // Copy phases (opacity + transform only: compositor-friendly, no per-frame filters)
+      for (const ph of phases) {
         let o;
-        if (inAt === 0) o = clamp((outAt + FADE - p) / FADE);
-        else o = Math.min(clamp((p - (inAt - FADE)) / FADE), clamp((outAt + FADE - p) / FADE));
-        const entering = p < inAt;
-        const shift = (1 - o) * 26 * (entering ? 1 : -1);
-        el.style.opacity = o.toFixed(3);
-        el.style.transform = o < 1 ? `translate3d(0, ${shift.toFixed(1)}px, 0)` : '';
-        el.style.filter = o < 1 && o > 0 ? `blur(${((1 - o) * 6).toFixed(1)}px)` : '';
-        el.classList.toggle('is-visible', o > 0.01);
-      });
+        if (ph.inAt === 0) o = clamp((ph.outAt + FADE - p) / FADE);
+        else o = Math.min(clamp((p - (ph.inAt - FADE)) / FADE), clamp((ph.outAt + FADE - p) / FADE));
+        o = Math.round(o * 1000) / 1000;
+        if (o === ph.o) continue;
+        ph.o = o;
+        const shift = (1 - o) * 24 * (p < ph.inAt ? 1 : -1);
+        ph.el.style.opacity = String(o);
+        ph.el.style.transform = o < 1 ? `translate3d(0, ${shift.toFixed(1)}px, 0)` : '';
+        ph.el.classList.toggle('is-visible', o > 0.01);
+      }
 
-      // Progress rail
       let step = 0;
       RAIL.forEach((edge, k) => { if (p >= edge) step = k + 1; });
       railSteps.forEach((el, k) => el.classList.toggle('is-active', k === step));
@@ -422,17 +454,21 @@
     const measure = () => {
       const rect = hero.getBoundingClientRect();
       const total = hero.offsetHeight - stage.offsetHeight;
-      target = total > 0 ? clamp(-rect.top / total) : 0;
+      const next = total > 0 ? clamp(-rect.top / total) : 0;
+      if (next !== target) direction = next > target ? 1 : -1;
+      target = next;
       visible = rect.bottom > 0 && rect.top < window.innerHeight;
     };
 
     const loop = (now) => {
-      const dt = lastTime ? Math.min(now - lastTime, 64) : 16.7;
+      const dt = lastTime ? Math.min(now - lastTime, 50) : 16.7;
       lastTime = now;
-      const k = 1 - Math.pow(1 - 0.16, dt / 16.7);
+      // Frame-rate independent easing towards the scroll position
+      const k = 1 - Math.pow(1 - SMOOTHING, dt / 16.7);
       progress += (target - progress) * k;
-      if (Math.abs(target - progress) < 0.00015) progress = target;
+      if (Math.abs(target - progress) < 0.00008) progress = target;
       render();
+      pump();
       if (progress !== target) rafId = requestAnimationFrame(loop);
       else { rafId = 0; lastTime = 0; }
     };
@@ -442,12 +478,7 @@
       if (!rafId) rafId = requestAnimationFrame(loop);
     }
 
-    const onScroll = () => {
-      measure();
-      requestRender();
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('scroll', () => { measure(); requestRender(); }, { passive: true });
     window.addEventListener('resize', () => { measure(); resize(); });
 
     measure();
