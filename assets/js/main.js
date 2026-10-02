@@ -228,8 +228,8 @@
 
     // Two frame sets cut from the same Higgsfield sequence: square and 9:16.
     const SETS = {
-      d: { path: '/assets/hero/d/', count: 300, final: '/assets/hero/final-d.webp', fx: 0.52, fy: 0.5, keep: 60 },
-      m: { path: '/assets/hero/m/', count: 200, final: '/assets/hero/final-m.webp', fx: 0.5, fy: 0.5, keep: 36 }
+      d: { path: '/assets/hero/v3/d/', count: 300, final: '/assets/hero/v3/final-d.webp', fx: 0.52, fy: 0.5, keep: 60 },
+      m: { path: '/assets/hero/v3/m/', count: 200, final: '/assets/hero/v3/final-m.webp', fx: 0.5, fy: 0.5, keep: 36 }
     };
     // Scroll timeline (0..1 across the pinned hero)
     const SEQ_START = 0.05;

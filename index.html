@@ -30,9 +30,9 @@
   <link rel="preload" href="/assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/instrument-serif-italic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/jost-var.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/assets/hero/d/000.webp" as="image" media="(min-aspect-ratio: 1/1)" fetchpriority="high">
-  <link rel="preload" href="/assets/hero/m/000.webp" as="image" media="(max-aspect-ratio: 1/1)" fetchpriority="high">
-  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="preload" href="/assets/hero/v3/d/000.webp" as="image" media="(min-aspect-ratio: 1/1)" fetchpriority="high">
+  <link rel="preload" href="/assets/hero/v3/m/000.webp" as="image" media="(max-aspect-ratio: 1/1)" fetchpriority="high">
+  <link rel="stylesheet" href="/assets/css/main.css?v=3">
 
   <script>
     document.documentElement.classList.add('js');
@@ -120,12 +120,12 @@
       <div class="hero__stage" data-hero-stage>
         <div class="hero__media" aria-hidden="true">
           <picture class="hero__poster" data-hero-poster>
-            <source media="(max-aspect-ratio: 1/1)" srcset="/assets/hero/m/000.webp">
-            <img src="/assets/hero/d/000.webp" alt="" width="1600" height="900" fetchpriority="high" decoding="async">
+            <source media="(max-aspect-ratio: 1/1)" srcset="/assets/hero/v3/m/000.webp">
+            <img src="/assets/hero/v3/d/000.webp" alt="" width="1600" height="900" fetchpriority="high" decoding="async">
           </picture>
           <picture class="hero__final" data-hero-final>
-            <source media="(max-aspect-ratio: 1/1)" srcset="/assets/hero/final-m.webp">
-            <img src="/assets/hero/final-d.webp" alt="" width="1920" height="1080" loading="lazy" decoding="async">
+            <source media="(max-aspect-ratio: 1/1)" srcset="/assets/hero/v3/final-m.webp">
+            <img src="/assets/hero/v3/final-d.webp" alt="" width="1920" height="1080" loading="lazy" decoding="async">
           </picture>
           <canvas class="hero__canvas" data-hero-canvas></canvas>
           <div class="hero__shade"></div>
@@ -523,6 +523,6 @@
     </div>
   </dialog>
 
-  <script src="/assets/js/main.js" defer></script>
+  <script src="/assets/js/main.js?v=3" defer></script>
 </body>
 </html>
