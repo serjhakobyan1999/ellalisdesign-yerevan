@@ -231,7 +231,6 @@ h2.display { font-size: clamp(2.5rem, 1.6rem + 4.2vw, 5.75rem); }
   display: flex;
   align-items: center;
   gap: 2rem;
-  max-width: var(--max);
   height: var(--header-h);
   margin: 0 auto;
   padding: 0 var(--gutter);
@@ -574,7 +573,7 @@ html:not(.js) .hero__scroll-cue { display: none; }
     max-width: none;
     margin: 0;
     align-items: center;
-    padding: calc(var(--header-h) + 3rem) clamp(2rem, 3.6vw, 4rem) 7rem max(var(--gutter), calc((100vw - var(--max)) / 2 + var(--gutter)));
+    padding: calc(var(--header-h) + 3rem) clamp(2rem, 3.6vw, 4.5rem) 7rem var(--gutter);
   }
   .hero__chapters { align-self: center; }
   .hero__chapter { align-self: center; }
@@ -583,7 +582,7 @@ html:not(.js) .hero__scroll-cue { display: none; }
   .hero__outro-title { font-size: clamp(3rem, 1rem + 4vw, 5.8rem); }
   .hero__rail {
     right: auto;
-    left: max(var(--gutter), calc((100vw - var(--max)) / 2 + var(--gutter)));
+    left: var(--gutter);
     bottom: 2.4rem;
     grid-auto-flow: column;
     justify-items: start;
