@@ -302,18 +302,23 @@
       }
     };
 
-    // Frames load in stages so they never compete with the first paint: a coarse pass once
-    // the page has loaded, then the full set on the first interaction (or after a short idle).
+    // Frames load in stages so they never compete with the first paint: a coarse pass and then
+    // the full set, each released by the first interaction or a short idle after load.
     const pageLoaded = new Promise((resolve) => {
       if (document.readyState === 'complete') resolve();
       else window.addEventListener('load', resolve, { once: true });
     });
+    let releaseCoarse;
     let releaseFull;
+    const coarseRequested = new Promise((resolve) => { releaseCoarse = resolve; });
     const fullRequested = new Promise((resolve) => { releaseFull = resolve; });
     ['scroll', 'wheel', 'touchstart', 'pointerdown', 'keydown'].forEach((type) => {
-      window.addEventListener(type, () => releaseFull(), { once: true, passive: true });
+      window.addEventListener(type, () => { releaseCoarse(); releaseFull(); }, { once: true, passive: true });
     });
-    pageLoaded.then(() => window.setTimeout(() => releaseFull(), 3000));
+    pageLoaded.then(() => {
+      window.setTimeout(() => releaseCoarse(), 1500);
+      window.setTimeout(() => releaseFull(), 3500);
+    });
 
     const loadSet = (s) => {
       bitmaps.forEach((b) => b.close && b.close());
@@ -360,6 +365,7 @@
 
       pageLoaded
         .then(reusePoster)
+        .then(() => coarseRequested)
         .then(() => run(coarse, 3))
         .then(() => fetchBlob(s.final))
         .then((blob) => (blob ? decode(blob) : null))
