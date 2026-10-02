@@ -282,34 +282,58 @@
       im.src = src;
     });
 
+    // Frames load in stages so they never compete with the first paint: a coarse pass once
+    // the page has loaded, then the full set on the first interaction (or after a short idle).
+    const pageLoaded = new Promise((resolve) => {
+      if (document.readyState === 'complete') resolve();
+      else window.addEventListener('load', resolve, { once: true });
+    });
+    let releaseFull;
+    const fullRequested = new Promise((resolve) => { releaseFull = resolve; });
+    ['scroll', 'wheel', 'touchstart', 'pointerdown', 'keydown'].forEach((type) => {
+      window.addEventListener(type, () => releaseFull(), { once: true, passive: true });
+    });
+    pageLoaded.then(() => window.setTimeout(() => releaseFull(), 3500));
+
+    const currentIndex = () => Math.round(clamp((progress - SEQ_START) / (SEQ_END - SEQ_START)) * (set.count - 1));
+
     const loadSet = (s) => {
       frames = new Array(s.count).fill(null);
       finalImg = null;
-      // Coarse-to-fine order so scrubbing works early and sharpens as frames arrive
-      const order = [];
+      const token = s;
+      const coarse = [];
       const seen = new Set();
-      [0, s.count - 1].forEach((i) => { seen.add(i); order.push(i); });
-      [16, 8, 4, 2, 1].forEach((step) => {
+      for (let i = 0; i < s.count; i += 11) { coarse.push(i); seen.add(i); }
+      if (!seen.has(s.count - 1)) { coarse.push(s.count - 1); seen.add(s.count - 1); }
+      const fine = [];
+      [6, 3, 2, 1].forEach((step) => {
         for (let i = 0; i < s.count; i += step) {
-          if (!seen.has(i)) { seen.add(i); order.push(i); }
+          if (!seen.has(i)) { seen.add(i); fine.push(i); }
         }
       });
-      let cursor = 0;
-      const token = s;
-      const worker = async () => {
-        while (cursor < order.length && set === token) {
-          const i = order[cursor++];
-          const im = await loadImage(`${s.path}${pad(i)}.webp`);
-          if (set !== token) return;
-          frames[i] = im;
-          if (i === 0 && !hero.classList.contains('is-ready')) {
-            hero.classList.add('is-ready');
+
+      const run = (order, workers) => {
+        let cursor = 0;
+        const worker = async () => {
+          while (cursor < order.length && set === token) {
+            const i = order[cursor++];
+            const im = await loadImage(`${s.path}${pad(i)}.webp`);
+            if (set !== token) return;
+            frames[i] = im;
+            if (i === 0) hero.classList.add('is-ready');
+            // Redraw only when the new frame is the one on screen (or its neighbour)
+            if (Math.abs(i - currentIndex()) <= 1) requestRender(true);
           }
-          requestRender();
-        }
+        };
+        return Promise.all(Array.from({ length: workers }, worker));
       };
-      for (let w = 0; w < 6; w++) worker();
-      loadImage(s.final).then((im) => { if (set === token) { finalImg = im; requestRender(); } });
+
+      pageLoaded
+        .then(() => run(coarse, 3))
+        .then(() => loadImage(s.final))
+        .then((im) => { if (set === token) { finalImg = im; requestRender(true); } })
+        .then(() => fullRequested)
+        .then(() => run(fine, 4));
     };
 
     const nearestFrame = (i) => {
