@@ -218,7 +218,7 @@
 
     const stage = hero.querySelector('[data-hero-stage]');
     const canvas = hero.querySelector('[data-hero-canvas]');
-    const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
+    const ctx = canvas.getContext('2d', { alpha: false });
     const phases = Array.from(hero.querySelectorAll('[data-phase]')).map((el) => ({
       el, inAt: Number(el.dataset.in), outAt: Number(el.dataset.out), o: -1
     }));
@@ -228,8 +228,8 @@
 
     // Two frame sets cut from the same Higgsfield sequence: square and 9:16.
     const SETS = {
-      d: { path: '/assets/hero/d/', count: 247, final: '/assets/hero/final-d.webp', fx: 0.52, fy: 0.5, keep: 48 },
-      m: { path: '/assets/hero/m/', count: 165, final: '/assets/hero/final-m.webp', fx: 0.5, fy: 0.5, keep: 30 }
+      d: { path: '/assets/hero/d/', count: 300, final: '/assets/hero/final-d.webp', fx: 0.52, fy: 0.5, keep: 60 },
+      m: { path: '/assets/hero/m/', count: 200, final: '/assets/hero/final-m.webp', fx: 0.5, fy: 0.5, keep: 36 }
     };
     // Scroll timeline (0..1 across the pinned hero)
     const SEQ_START = 0.05;
@@ -273,10 +273,10 @@
       const centre = Math.round(seqIndex(progress));
       const ahead = Math.round(set.keep * 0.7);
       const behind = set.keep - ahead;
-      for (let d = 0; d <= ahead && decoding.size < 4; d++) {
+      for (let d = 0; d <= ahead && decoding.size < 6; d++) {
         for (const i of [centre + d * direction, centre - Math.min(d, behind) * direction]) {
           if (i < 0 || i >= set.count || !blobs[i] || bitmaps.has(i) || decoding.has(i)) continue;
-          if (decoding.size >= 4) break;
+          if (decoding.size >= 6) break;
           decoding.add(i);
           const token = set;
           decode(blobs[i]).then((bmp) => {
